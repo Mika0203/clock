@@ -9,6 +9,7 @@ const TooltipStyle = styled.div`
     border-radius: 8px;
     position: absolute;
     pointer-events : none;
+    transform: translateY(calc(100% * -1));
 `;
 
 export default function Tooltip() {
