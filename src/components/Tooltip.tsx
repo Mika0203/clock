@@ -1,16 +1,14 @@
 import styled from "styled-components"
 import { useAppSelector } from "../redux/hooks";
 
-const TooltipStyle = styled.div<{ x: number, y: number }>`
-    background-color: yellow;
+const TooltipStyle = styled.div`
+    background-color: black;
+    color: white;
     padding: 5px 10px;
     z-index: 999;
     border-radius: 8px;
     position: absolute;
-    left: ${state => state.x}px;
-    top: ${state => state.y}px;
     pointer-events : none;
-
 `;
 
 export default function Tooltip() {
@@ -21,7 +19,10 @@ export default function Tooltip() {
     return <>
         {
             (isShow && text) &&
-            <TooltipStyle x={position.x} y={position.y}>
+            <TooltipStyle style={{
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+            }} >
                 {text}
             </TooltipStyle>
         }

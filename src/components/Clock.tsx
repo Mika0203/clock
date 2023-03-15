@@ -67,11 +67,11 @@ export default function Clock() {
 
     const onMouseMove = (e: React.MouseEvent) => {
         dispatch(setToolPosition({ x: e.clientX, y: e.clientY }));
-        dispatch(setTooltipText(date.toLocaleString()))
     }
 
     const showTooltip = () => {
         setIsShowingTooltip(true);
+        dispatch(setTooltipText(date.toLocaleString()))
         dispatch(onTooltip());
     };
 
