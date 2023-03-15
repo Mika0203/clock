@@ -1,56 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { useEffect } from 'react';
 import './App.css';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
+import Clock from './components/Clock';
+import { startClock, stopClock } from './redux/clockSlice';
+import styled from 'styled-components';
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100vh;
+  align-items: center;
+`;
 
 function App() {
+  const dispatch = useAppDispatch();
+  const isStart = useAppSelector(s => s.clock.isStart);
+
+  const toggleClock = () => dispatch(isStart ? stopClock() : startClock());
+  useEffect(() => {
+    dispatch(startClock());
+    return () => { dispatch(stopClock()); };
+  }, [dispatch]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+
+      <button style={{
+        width: "100px",
+        height: "100px"
+      }} onClick={toggleClock}>
+        {isStart ? "Stop" : "Start"}
+      </button>
+      <Body>
+        <Clock />
+        <Clock />
+        <Clock />
+        <Clock />
+        <Clock />
+      </Body>
+
     </div>
   );
 }
