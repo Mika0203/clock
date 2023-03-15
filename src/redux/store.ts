@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import clockReducer from './clockSlice';
+import clockReducer from './slices/clockSlice';
+import tooltipReducer from './slices/tooltipSlice';
 
 export const store = configureStore({
   reducer: {
-    clock: clockReducer
+    clock: clockReducer,
+    tooltip: tooltipReducer
   },
 });
 

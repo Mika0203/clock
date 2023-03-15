@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import './App.css';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import Clock from './components/Clock';
-import { startClock, stopClock } from './redux/clockSlice';
+import { startClock, stopClock } from './redux/slices/clockSlice';
 import styled from 'styled-components';
+import Tooltip from './components/Tooltip';
 
 const Body = styled.div`
   display: flex;
@@ -16,7 +17,6 @@ const Body = styled.div`
 function App() {
   const dispatch = useAppDispatch();
   const isStart = useAppSelector(s => s.clock.isStart);
-
   const toggleClock = () => dispatch(isStart ? stopClock() : startClock());
   useEffect(() => {
     dispatch(startClock());
@@ -39,7 +39,7 @@ function App() {
         <Clock />
         <Clock />
       </Body>
-
+      <Tooltip />
     </div>
   );
 }

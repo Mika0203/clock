@@ -1,5 +1,7 @@
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components"
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { offTooltip, onTooltip, setToolPosition, setTooltipText } from "../redux/slices/tooltipSlice";
 
 const Background = styled.div`
     background-color: blue;
@@ -25,6 +27,7 @@ const Niddle = styled.div<NiddleProps>`
     transform-origin: bottom;
     transform: translateY(-50%) rotateZ(${({ deg }) => deg}deg);
     position: absolute;
+    pointer-events : none;
 `;
 
 const Center = styled.div`
@@ -33,31 +36,58 @@ const Center = styled.div`
     height: 20px;
     background-color: black;
     border-radius: 999px;
+    pointer-events : none;
+
 `;
 
 export default function Clock() {
+    const dispatch = useAppDispatch();
     const time: number = useAppSelector(state => state.clock.time);
-    const getDateFromTime = (time: number) => new Date(time);
+    const date = useMemo(() => new Date(time), [time]);
 
-    const getTimeDeg = (time: number): number => {
-        const date = getDateFromTime(time);
-        return ((date.getHours() % 12) / 12) * 360
-            + (((date.getMinutes() % 60) / 60) * (360 / 12));
+    const [isShowingTooltip, setIsShowingTooltip] = useState(false);
+
+    useEffect(() => {
+        isShowingTooltip &&
+            dispatch(setTooltipText(date.toLocaleString()));
+    }, [date, dispatch, isShowingTooltip]);
+
+    const getTimeDeg = (dateTime: Date): number => {
+        return ((dateTime.getHours() % 12) / 12) * 360
+            + (((dateTime.getMinutes() % 60) / 60) * (360 / 12));
     };
 
-    const getMinDeg = (time: number): number => {
-        return ((getDateFromTime(time).getMinutes() % 60) / 60) * 360;
+    const getMinDeg = (dateTime: Date): number => {
+        return ((dateTime.getMinutes() % 60) / 60) * 360;
     }
 
-    const getSecDeg = (time: number): number => {
-        return ((getDateFromTime(time).getSeconds() % 60) / 60) * 360;
+    const getSecDeg = (dateTime: Date): number => {
+        return ((dateTime.getSeconds() % 60) / 60) * 360;
     }
+
+    const onMouseMove = (e: React.MouseEvent) => {
+        dispatch(setToolPosition({ x: e.clientX, y: e.clientY }));
+        dispatch(setTooltipText(date.toLocaleString()))
+    }
+
+    const showTooltip = () => {
+        setIsShowingTooltip(true);
+        dispatch(onTooltip());
+    };
+
+    const dismissTooltip = () => {
+        setIsShowingTooltip(false);
+        dispatch(offTooltip());
+    };
 
     return <>
-        <Background>
-            <Niddle width={5} length={0.6} deg={getTimeDeg(time)} />
-            <Niddle width={3} length={0.9} deg={getMinDeg(time)} />
-            <Niddle width={1} length={0.7} deg={getSecDeg(time)} />
+        <Background
+            onMouseOver={() => showTooltip()}
+            onMouseOut={() => dismissTooltip()}
+            onMouseMove={onMouseMove}>
+            <Niddle width={5} length={0.6} deg={getTimeDeg(date)} />
+            <Niddle width={3} length={0.9} deg={getMinDeg(date)} />
+            <Niddle width={1} length={0.7} deg={getSecDeg(date)} />
             <Center />
         </Background>
     </>
